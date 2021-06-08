@@ -1,4 +1,4 @@
-# Custom class for generating images
+# Custom classes for dealing with files and images
 
 Few handy helpers to deal with files/images when generating galleries or listing files.
 
