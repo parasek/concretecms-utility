@@ -34,7 +34,6 @@ $imageHelper = new ImageHelper();
 $galleryImage = $imageHelper->getGalleryImage($this->c->getAttribute('thumbnail'), 100, 200, true);
 $sliderImages = $imageHelper->getSliderImages(
     'Example File Set name',
-    null,
     1372,
     664,
     true,
