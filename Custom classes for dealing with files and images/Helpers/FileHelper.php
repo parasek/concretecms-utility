@@ -30,6 +30,7 @@ class FileHelper
      * Get file info as an array.
      *
      * [
+     *     'id'            => '',
      *     'name'          => '',
      *     'file_name'     => '',
      *     'url'           => '',
@@ -45,6 +46,7 @@ class FileHelper
         /* @var Version $file */
 
         $output = [
+            'id'            => '',
             'name'          => '',
             'file_name'     => '',
             'url'           => '',
@@ -57,6 +59,7 @@ class FileHelper
         if ($file !== null) {
 
             $output = array_merge($output, [
+                'id'            => $file->getFileID(),
                 'name'          => $this->getModifiedName($file),
                 'file_name'     => $file->getFileName(),
                 'url'           => $file->getURL(),

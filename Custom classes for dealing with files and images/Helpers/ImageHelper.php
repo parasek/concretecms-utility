@@ -27,6 +27,7 @@ class ImageHelper extends FileHelper
      * If no image or invalid image is selected, placeholder data will be returned.
      *
      * [
+     *     'id'          => '',
      *     'thumbnail'   => '',
      *     'url'         => '',
      *     'placeholder' => '',
@@ -51,6 +52,7 @@ class ImageHelper extends FileHelper
         $placeholder = $this->getPlaceholderString($width, $height);
 
         $output = [
+            'id'          => false,
             'thumbnail'   => false,
             'url'         => $placeholder,
             'placeholder' => '',
@@ -64,6 +66,7 @@ class ImageHelper extends FileHelper
             $thumbnail = $this->generateThumbnail($file, $width, $height, $crop);
 
             $output = array_merge($output, [
+                'id'          => $file->getFileID(),
                 'thumbnail'   => true,
                 'url'         => $thumbnail['url'],
                 'placeholder' => $placeholder,
@@ -130,6 +133,7 @@ class ImageHelper extends FileHelper
      * If no image or invalid image is selected, placeholder data will be returned.
      *
      * [
+     *     'id'                      => '',
      *     'thumbnail'               => '',
      *     'url'                     => '',
      *     'placeholder'             => '',
@@ -159,6 +163,7 @@ class ImageHelper extends FileHelper
         $thumbnailAlt = ($alt === null) ? '' : $alt;
 
         $output = [
+            'id'                      => false,
             'thumbnail'               => false,
             'url'                     => $placeholder,
             'placeholder'             => '',
@@ -179,6 +184,7 @@ class ImageHelper extends FileHelper
             $thumbnailAlt = ($alt === null) ? $this->getModifiedName($file) : $alt;
 
             $output = array_merge($output, [
+                'id'                      => $file->getFileID(),
                 'thumbnail'               => true,
                 'url'                     => $thumbnail['url'],
                 'placeholder'             => $placeholder,
