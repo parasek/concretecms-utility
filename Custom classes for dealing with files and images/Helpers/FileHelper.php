@@ -207,6 +207,10 @@ class FileHelper
 
     protected function convertToObject($file): ?FileEntity
     {
+        if (is_string($file)) {
+            $file = (int)$file;
+        }
+
         if (is_int($file)) {
             $file = File::getByID($file);
         }
