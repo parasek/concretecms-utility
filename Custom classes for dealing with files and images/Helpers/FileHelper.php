@@ -29,6 +29,14 @@ class FileHelper
     /**
      * Get file info as an array.
      *
+     * [
+     *     'name'          => '',
+     *     'file_name'     => '',
+     *     'url'           => '',
+     *     'relative_path' => '',
+     *     'download_url'  => '',
+     * ];
+     *
      * @param $file "File Object / File ID"
      * @return array
      */
@@ -36,18 +44,27 @@ class FileHelper
     {
         /* @var Version $file */
 
-        $output = [];
+        $output = [
+            'name'          => '',
+            'file_name'     => '',
+            'url'           => '',
+            'relative_path' => '',
+            'download_url'  => '',
+        ];
 
         $file = $this->convertToObject($file);
-        if ($file === null) return $output;
 
-        $output = [
-            'name'          => $this->getModifiedName($file),
-            'file_name'     => $file->getFileName(),
-            'url'           => $file->getURL(),
-            'relative_path' => $file->getRelativePath(),
-            'download_url'  => (string)$file->getForceDownloadURL(),
-        ];
+        if ($file !== null) {
+
+            $output = array_merge($output, [
+                'name'          => $this->getModifiedName($file),
+                'file_name'     => $file->getFileName(),
+                'url'           => $file->getURL(),
+                'relative_path' => $file->getRelativePath(),
+                'download_url'  => (string)$file->getForceDownloadURL(),
+            ]);
+
+        }
 
         return $output;
     }
