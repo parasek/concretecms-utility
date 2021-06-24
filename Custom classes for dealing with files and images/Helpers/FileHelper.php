@@ -12,14 +12,14 @@ use Concrete\Core\File\FileList;
 
 
 /**
- * Opinionated file-related helpers for concrete5.8 and php7.4+.
+ * Opinionated file-related helpers for concrete5.8 and php7.3+.
  *
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link https://github.com/parasek/c5-snippets
  */
 class FileHelper
 {
-    protected Application $app;
+    protected $app;
 
     public function __construct()
     {
