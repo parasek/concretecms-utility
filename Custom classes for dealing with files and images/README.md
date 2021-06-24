@@ -6,6 +6,7 @@ Few handy helpers to deal with files/images when generating galleries or listing
 getFile();
 getFilesByFileSet();
 getFilesByMainFile();
+getModifiedName();
 
 getImage();
 getImagesByFileSet();
@@ -20,6 +21,16 @@ getPlaceholderString();
 ## Installation
 
 Paste Helpers folder into application/src.
+
+If you aren't auto-loading classes from src folder, add code below to autoload.php:
+
+```php
+// application/bootstrap/autoload.php
+
+$classLoader = new \Symfony\Component\ClassLoader\Psr4ClassLoader();
+$classLoader->addPrefix('Application', DIR_APPLICATION . '/' . DIRNAME_CLASSES);
+$classLoader->register();
+```
 
 ## Example usage in controller
 
