@@ -24,6 +24,16 @@ class ImageHelper extends FileHelper
 
     /**
      * Get image info as an array.
+     * If no image or invalid image is selected, placeholder data will be returned.
+     *
+     * [
+     *     'thumbnail'   => '',
+     *     'url'         => '',
+     *     'placeholder' => '',
+     *     'width'       => '',
+     *     'height'      => '',
+     *     'alt'         => '',
+     * ];
      *
      * @param $file "File Object / File ID"
      * @param int $width
@@ -36,20 +46,33 @@ class ImageHelper extends FileHelper
     {
         /* @var Version $file */
 
-        $output = [];
-
         $file = $this->convertToObject($file);
-        if (!$this->isValidImage($file)) return $output;
 
-        $thumbnail = $this->generateThumbnail($file, $width, $height, $crop);
+        $placeholder = $this->getPlaceholderString($width, $height);
 
         $output = [
-            'url'         => $thumbnail['url'],
-            'placeholder' => $this->getPlaceholderString($thumbnail['width'], $thumbnail['height']),
-            'width'       => $thumbnail['width'],
-            'height'      => $thumbnail['height'],
-            'alt'         => $alt ?? $this->getModifiedName($file),
+            'thumbnail'   => false,
+            'url'         => $placeholder,
+            'placeholder' => '',
+            'width'       => $width,
+            'height'      => $height,
+            'alt'         => ($alt === null) ? '' : $alt,
         ];
+
+        if ($this->isValidImage($file)) {
+
+            $thumbnail = $this->generateThumbnail($file, $width, $height, $crop);
+
+            $output = array_merge($output, [
+                'thumbnail'   => true,
+                'url'         => $thumbnail['url'],
+                'placeholder' => $placeholder,
+                'width'       => $thumbnail['width'],
+                'height'      => $thumbnail['height'],
+                'alt'         => ($alt === null) ? $this->getModifiedName($file) : $alt,
+            ]);
+
+        }
 
         return $output;
     }
@@ -104,6 +127,20 @@ class ImageHelper extends FileHelper
 
     /**
      * Get image info as array (additional image is generated for fullscreen lightbox).
+     * If no image or invalid image is selected, placeholder data will be returned.
+     *
+     * [
+     *     'thumbnail'               => '',
+     *     'url'                     => '',
+     *     'placeholder'             => '',
+     *     'width'                   => '',
+     *     'height'                  => '',
+     *     'alt'                     => '',
+     *     'title'                   => '',
+     *     'fullscreen_image_url'    => '',
+     *     'fullscreen_image_width'  => '',
+     *     'fullscreen_image_height' => '',
+     * ];
      *
      * @param $file "File Object / File ID"
      * @param int $width
@@ -115,28 +152,46 @@ class ImageHelper extends FileHelper
      */
     public function getGalleryImage($file, int $width, int $height, bool $crop, ?string $alt = null, ?string $title = null): array
     {
-        $output = [];
-
         $file = $this->convertToObject($file);
-        if (!$this->isValidImage($file)) return $output;
 
-        $thumbnail = $this->generateThumbnail($file, $width, $height, $crop);
-        $fullscreenImage = $this->generateThumbnail($file, 1920, 1080, false);
+        $placeholder = $this->getPlaceholderString($width, $height);
 
-        $alt = $alt ? $alt : $this->getModifiedName($file);
-        $title = ($title === null) ? $alt : $title;
+        $thumbnailAlt = ($alt === null) ? '' : $alt;
 
         $output = [
-            'url'                     => $thumbnail['url'],
-            'placeholder'             => $this->getPlaceholderString($thumbnail['width'], $thumbnail['height']),
-            'width'                   => $thumbnail['width'],
-            'height'                  => $thumbnail['height'],
-            'fullscreen_image_url'    => $fullscreenImage['url'],
-            'fullscreen_image_width'  => $fullscreenImage['width'],
-            'fullscreen_image_height' => $fullscreenImage['height'],
-            'alt'                     => $alt,
-            'title'                   => $title,
+            'thumbnail'               => false,
+            'url'                     => $placeholder,
+            'placeholder'             => '',
+            'width'                   => $width,
+            'height'                  => $height,
+            'alt'                     => $thumbnailAlt,
+            'title'                   => ($title === null) ? $thumbnailAlt : $title,
+            'fullscreen_image_url'    => '',
+            'fullscreen_image_width'  => '',
+            'fullscreen_image_height' => '',
         ];
+
+        if ($this->isValidImage($file)) {
+
+            $thumbnail = $this->generateThumbnail($file, $width, $height, $crop);
+            $fullscreenImage = $this->generateThumbnail($file, 1920, 1080, false);
+
+            $thumbnailAlt = ($alt === null) ? $this->getModifiedName($file) : $alt;
+
+            $output = array_merge($output, [
+                'thumbnail'               => true,
+                'url'                     => $thumbnail['url'],
+                'placeholder'             => $placeholder,
+                'width'                   => $thumbnail['width'],
+                'height'                  => $thumbnail['height'],
+                'alt'                     => $thumbnailAlt,
+                'title'                   => ($title === null) ? $thumbnailAlt : $title,
+                'fullscreen_image_url'    => $fullscreenImage['url'],
+                'fullscreen_image_width'  => $fullscreenImage['width'],
+                'fullscreen_image_height' => $fullscreenImage['height'],
+            ]);
+
+        }
 
         return $output;
     }
