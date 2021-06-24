@@ -112,6 +112,37 @@ class FileHelper
         return $output;
     }
 
+
+    /**
+     * Get modified name based on concrete5 title attribute
+     *
+     * @param $file "File Object / File ID"
+     * @return string
+     */
+    public function getModifiedName($file): string
+    {
+        /* @var Version $file */
+
+        $file = $this->convertToObject($file);
+
+        $title = '';
+
+        if ($file !== null) {
+
+            $title = $file->getTitle();
+
+            $supportedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+            $extension = strtolower(pathinfo($file->getTitle(), PATHINFO_EXTENSION));
+            if (!empty($extension) and in_array($extension, $supportedExtensions)) {
+                $title = pathinfo($file->getTitle(), PATHINFO_FILENAME); // Remove extension
+                $title = preg_replace('/ - [0-9]*$/', '', $title); // Remove counter (at the end of filename), " - 001" etc.
+            }
+
+        }
+
+        return $title;
+    }
+
     protected function getMainFileset($file): ?FileSet
     {
         /* @var FileEntity $file */
@@ -183,21 +214,5 @@ class FileHelper
         if (!($file instanceof FileEntity)) return null;
 
         return $file;
-    }
-
-    protected function getModifiedName(FileEntity $file): string
-    {
-        /* @var Version $file */
-
-        $title = $file->getTitle();
-
-        $supportedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
-        $extension = strtolower(pathinfo($file->getTitle(), PATHINFO_EXTENSION));
-        if (!empty($extension) and in_array($extension, $supportedExtensions)) {
-            $title = pathinfo($file->getTitle(), PATHINFO_FILENAME); // Remove extension
-            $title = preg_replace('/ - [0-9]*$/', '', $title); // Remove counter (at the end of filename), " - 001" etc.
-        }
-
-        return $title;
     }
 }
