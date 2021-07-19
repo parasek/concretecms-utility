@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Helpers;
+namespace Application\Utility;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Support\Facade\Application as ApplicationFacade;
@@ -17,7 +17,7 @@ use Concrete\Core\File\FileList;
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link https://github.com/parasek/c5-snippets
  */
-class FileHelper
+class FileUtility
 {
     protected $app;
 

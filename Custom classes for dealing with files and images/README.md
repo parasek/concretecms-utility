@@ -20,7 +20,7 @@ getPlaceholderString();
 
 ## Installation
 
-Paste Helpers folder into application/src.
+Paste Utility folder into application/src.
 
 If you aren't auto-loading classes from src folder, add code below to autoload.php:
 
@@ -35,15 +35,15 @@ $classLoader->register();
 ## Example usage in controller
 
 ```php
-use Application\Helpers\FileHelper;
-use Application\Helpers\ImageHelper;
+use Application\Utility\FileUtility;
+use Application\Utility\ImageUtility;
         
-$fileHelper = new FileHelper();
-$files = $fileHelper->getFilesByFileSet('File Set name');
+$fileUtility = new FileUtility();
+$files = $fileUtility->getFilesByFileSet('File Set name');
 
-$imageHelper = new ImageHelper();
-$galleryImage = $imageHelper->getGalleryImage($this->c->getAttribute('thumbnail'), 100, 200, true);
-$sliderImages = $imageHelper->getSliderImages(
+$imageUtility = new ImageUtility();
+$galleryImage = $imageUtility->getGalleryImage($this->c->getAttribute('thumbnail'), 100, 200, true);
+$sliderImages = $imageUtility->getSliderImages(
     'Example File Set name',
     1372,
     664,
@@ -55,10 +55,10 @@ $sliderImages = $imageHelper->getSliderImages(
 or
 
 ```php
-$fileHelper = $this->app->make('Application\Helpers\FileHelper');
-$file = $fileHelper->getFile($this->c->getAttribute('attribute_handle'));
-$files = $fileHelper->getFilesByFileSet('Example File Set name');
+$fileUtility = $this->app->make('Application\Utility\FileUtility');
+$file = $fileUtility->getFile($this->c->getAttribute('attribute_handle'));
+$files = $fileUtility->getFilesByFileSet('Example File Set name');
 
-$imageHelper = $this->app->make('Application\Helpers\ImageHelper');
-$images = $imageHelper->getImagesByMainImage($this->c->getAttribute('main_image'), 100, 200, true);
+$imageUtility = $this->app->make('Application\Utility\ImageUtility');
+$images = $imageUtility->getImagesByMainImage($this->c->getAttribute('main_image'), 100, 200, true);
 ```

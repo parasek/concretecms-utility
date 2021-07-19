@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Helpers;
+namespace Application\Utility;
 
 use Concrete\Core\Entity\File\File as FileEntity;
 use Concrete\Core\Entity\File\Version;
@@ -12,7 +12,7 @@ use Concrete\Core\Page\Page;
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link https://github.com/parasek/c5-snippets
  */
-class ImageHelper extends FileHelper
+class ImageUtility extends FileUtility
 {
     private $ih;
 
