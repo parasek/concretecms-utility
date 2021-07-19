@@ -312,6 +312,7 @@ class ImageUtility extends FileUtility
                 'width'           => $width,
                 'height'          => $height,
                 'srcset'          => $srcset,
+                'placeholder'     => $this->getPlaceholderString($width, $height),
                 'sizes'           => '(max-width: 767px)  100vw,
                                       (max-width: 991px)  740px,
                                       (max-width: 1199px) 960px,
