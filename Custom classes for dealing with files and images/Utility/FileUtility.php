@@ -157,8 +157,8 @@ class FileUtility
     {
         $output = [];
 
-        if (is_int($fileSet)) {
-            $fileSet = $fileSet = FileSet::getByID($fileSet);
+        if (is_numeric($fileSet)) {
+            $fileSet = FileSet::getByID($fileSet);
         }
 
         if (is_string($fileSet)) {
@@ -207,11 +207,7 @@ class FileUtility
 
     protected function convertToObject($file): ?FileEntity
     {
-        if (is_string($file)) {
-            $file = (int)$file;
-        }
-
-        if (is_int($file)) {
+        if (is_numeric($file)) {
             $file = File::getByID($file);
         }
 
