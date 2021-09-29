@@ -55,7 +55,7 @@ class ImageUtility extends FileUtility
             'id'          => false,
             'thumbnail'   => false,
             'url'         => $placeholder,
-            'placeholder' => '',
+            'placeholder' => $placeholder,
             'width'       => $width,
             'height'      => $height,
             'alt'         => ($alt === null) ? '' : $alt,
