@@ -1,0 +1,28 @@
+{
+  "name": "parasek/concretecms_utility",
+  "description": "Few handy, opinionated helpers for dealing with Files/Images when generating Images/Galleries/Sliders/File Lists etc.",
+  "require": {
+    "php": ">=8.1",
+    "concrete5/core": "^9.1.0"
+  },
+  "minimum-stability": "stable",
+  "keywords": [
+    "concrete cms",
+    "concrete5",
+    "concretecms",
+    "c5",
+    "concrete cms utility"
+  ],
+  "homepage": "https://github.com/parasek/concretecms-utility",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sławek Radomski",
+      "role": "Developer"
+    },
+    {
+      "name": "Jarosław Radomski",
+      "role": "Developer"
+    }
+  ]
+}
