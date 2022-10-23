@@ -66,14 +66,14 @@ getPlaceholderString();
 ## Installation
 
 ```php
-composer require parasek/concrete_cms_utility
+composer require parasek/concretecms_utility
 ```
 
 ## Installation (without composer)
 
-Download `ConcreteCmsUtility` folder and paste it into `application/src`.
+Download the latest release and copy content of `src` folder into `application/src/ConcreteCmsUtility`.
 
-If you aren't auto-loading classes from `src` folder, add code below in `application/bootstrap/app.php`:
+Add code below in `application/bootstrap/app.php`:
 
 ```php
 $classLoader = new \Symfony\Component\ClassLoader\Psr4ClassLoader();
