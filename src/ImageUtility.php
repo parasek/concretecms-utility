@@ -83,6 +83,8 @@ class ImageUtility extends FileUtility
 
         if ($isSvg) {
             $url = $file->getURL();
+            $width = $svgData->width;
+            $height = $svgData->height;
         }
 
         if ($isValid) {
@@ -257,6 +259,12 @@ class ImageUtility extends FileUtility
         if ($isSvg) {
             $url = $file->getURL();
             $fullscreenUrl = $file->getURL();
+
+            $width = $svgData->width;
+            $height = $svgData->height;
+
+            $fullscreenWidth = $svgData->width;
+            $fullscreenHeight = $svgData->height;
         }
 
         if ($isValid) {
@@ -444,6 +452,8 @@ class ImageUtility extends FileUtility
 
         if ($isSvg) {
             $url = $file->getURL();
+            $width = $svgData->width;
+            $height = $svgData->height;
         }
 
         if ($isValid) {
