@@ -55,7 +55,7 @@ class FileUtility
      * You can provide File Set ID, File Set Name or File Set Object.
      *
      * @param int|string|FileSet|null $fileSet "File Set ID, File Set Name or File Set Object"
-     * @return array
+     * @return FileData[]
      */
     public function getFilesByFileSet(int|string|FileSet|null $fileSet): array
     {
@@ -78,7 +78,7 @@ class FileUtility
      * Selected File will be the first element of list, other Files will be sorted by position in File Set.
      *
      * @param int|FileEntity|FileVersionEntity|null $file "File ID, File Object or File Version Object"
-     * @return array
+     * @return FileData[]
      */
     public function getFilesByMainFile(int|FileEntity|FileVersionEntity|null $file): array
     {

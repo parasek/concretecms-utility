@@ -116,7 +116,7 @@ class ImageUtility extends FileUtility
      * @param int $height
      * @param bool $crop
      * @param string|null $alt "Provide string to set single alt attribute for all Images."
-     * @return array
+     * @return ImageData[]
      */
     public function getImagesByFileSet(
         int|string|FileSet|null $fileSet,
@@ -155,7 +155,7 @@ class ImageUtility extends FileUtility
      * @param int $height
      * @param bool $crop
      * @param string|null $alt "Provide string to set single alt attribute for all Images."
-     * @return array
+     * @return ImageData[]
      */
     public function getImagesByMainImage(
         int|FileEntity|FileVersionEntity|null $file,
@@ -298,7 +298,7 @@ class ImageUtility extends FileUtility
      * @param int $fullscreenWidth
      * @param int $fullscreenHeight
      * @param bool $fullscreenCrop
-     * @return array
+     * @return GalleryImageData[]
      */
     public function getGalleryImagesByFileSet(
         int|string|FileSet|null $fileSet,
@@ -349,7 +349,7 @@ class ImageUtility extends FileUtility
      * @param int $fullscreenWidth
      * @param int $fullscreenHeight
      * @param bool $fullscreenCrop
-     * @return array
+     * @return GalleryImageData[]
      */
     public function getGalleryImagesByMainImage(
         int|FileEntity|FileVersionEntity|null $file,
@@ -550,7 +550,7 @@ class ImageUtility extends FileUtility
      * @param string|null $alt "Provide string to set single alt attribute for all Slider Images."
      * @param array $additionalImageWidths
      * @param string|null $sizes
-     * @return array
+     * @return SliderImageData[]
      */
     public function getSliderImagesByFileset(
         int|string|FileSet|null $fileSet,
