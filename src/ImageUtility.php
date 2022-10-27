@@ -56,7 +56,7 @@ class ImageUtility extends FileUtility
 
         $isValidImage = $this->isValidImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
-        $isValid = $isValidImage or $isSvg;
+        $isValid = ($isValidImage or $isSvg);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
@@ -219,7 +219,7 @@ class ImageUtility extends FileUtility
 
         $isValidImage = $this->isValidImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
-        $isValid = $isValidImage or $isSvg;
+        $isValid = ($isValidImage or $isSvg);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
@@ -418,7 +418,7 @@ class ImageUtility extends FileUtility
 
         $isValidImage = $this->isValidImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
-        $isValid = $isValidImage or $isSvg;
+        $isValid = ($isValidImage or $isSvg);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
