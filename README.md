@@ -81,6 +81,20 @@ $classLoader->addPrefix('ConcreteCmsUtility', DIR_APPLICATION . '/' . DIRNAME_CL
 $classLoader->register();
 ```
 
+## Service provider
+You can register service provider in `application/config/app.php` in `providers` section
+
+```php
+'providers' => [
+    'concrete_cms_utility' => ConcreteCmsUtility\ServiceProvider::class,
+],
+```
+Then you will be able to use shorthands like:
+```php
+app('utils/image')->getPlaceholderString(width: 100, height: 100);
+$app->make('utils/file')->getFile(file: 1)->url;
+```
+
 ## Example usage
 
 How to load services:
