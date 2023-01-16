@@ -1,3 +1,6 @@
+# 1.1.0
+- Add service provider, see README.md
+
 # 1.0.1
 - Fix returned type hints for arrays
 - Fix dimensions for svg files
