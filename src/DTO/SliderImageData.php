@@ -26,7 +26,7 @@ class SliderImageData
         public readonly ?string   $subtitle,
         public readonly ?string   $link,
         public readonly ?string   $buttonText,
-        public readonly bool      $rightAlignment,
+        public readonly ?string   $textAlignment,
         public readonly bool      $newWindow,
         public readonly ?FileData $file,
         public readonly ?SvgData  $svg,

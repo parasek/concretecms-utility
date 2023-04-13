@@ -430,7 +430,7 @@ class ImageUtility extends FileUtility
         $subtitle = null;
         $link = null;
         $buttonText = null;
-        $rightAlignment = false;
+        $textAlignment = false;
         $newWindow = false;
 
         if ($isValidImage) {
@@ -503,7 +503,7 @@ class ImageUtility extends FileUtility
             $title = $file->getAttribute('slide_title') ?? null;
             $subtitle = $file->getAttribute('slide_subtitle') ?? null;
             $buttonText = $file->getAttribute('slide_button_text') ?? null;
-            $rightAlignment = (bool)$file->getAttribute('slide_right_alignment');
+            $textAlignment = (string)$file->getAttribute('slide_text_alignment');
             $newWindow = (bool)$file->getAttribute('slide_new_window');
         }
 
@@ -523,7 +523,7 @@ class ImageUtility extends FileUtility
             subtitle: $subtitle,
             link: $link,
             buttonText: $buttonText,
-            rightAlignment: $rightAlignment,
+            textAlignment: $textAlignment,
             newWindow: $newWindow,
             file: $fileData,
             svg: $svgData,
@@ -540,7 +540,7 @@ class ImageUtility extends FileUtility
      * - slide_link_suffix (Text)
      * - slide_link_external (Text)
      * - slide_button_text (Text)
-     * - slide_right_alignment (Checkbox)
+     * - slide_text_alignment (Select)
      * - slide_new_window (Checkbox)
      *
      * Argument $additionalImageWidths:
