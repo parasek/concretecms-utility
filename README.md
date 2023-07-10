@@ -54,7 +54,6 @@ listFilesFromFileSet();
 listFilesFromFirstFileSet();
 
 // $imageUtility
-getImage();
 getImagesByFileSet();
 getImagesByMainImage();
 getGalleryImage();
@@ -64,10 +63,11 @@ getSliderImage
 getSliderImagesByFileset();
 getPlaceholderString();
 generateThumbnail();
-isValidImage();
+isImage();
+getImage();
 isSvg();
-isVideo();
 getSvg();
+isVideo();
 getVideo();
 ```
 

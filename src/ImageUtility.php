@@ -35,83 +35,6 @@ class ImageUtility extends FileUtility
     }
 
     /**
-     * Create Image using BasicThumbnailer service ('helper/image') and get common info.
-     *
-     * You can provide File ID, File Object or File Version Object.
-     *
-     * @param int|FileEntity|FileVersionEntity|null $file "File ID, File Object or File Version Object"
-     * @param int $width
-     * @param int $height
-     * @param bool $crop
-     * @param string|null $alt "Provide string to replace default alt attribute (modified Concrete Title attribute)."
-     * @return ImageData
-     */
-    public function getImage(
-        int|FileEntity|FileVersionEntity|null $file,
-        int                                   $width,
-        int                                   $height,
-        bool                                  $crop,
-        ?string                               $alt = null,
-    ): ImageData
-    {
-        /* @var FileEntity|FileVersionEntity $file */
-        $file = $this->convertToFileObject(file: $file);
-
-        $isValidImage = $this->isValidImage(file: $file);
-        $isSvg = $this->isSvg(file: $file);
-        $isValid = ($isValidImage or $isSvg);
-
-        $fileData = $this->getFile(file: $file);
-        $svgData = $this->getSvg(file: $file);
-
-        $url = null;
-        $placeholder = $this->getPlaceholderString(width: $width, height: $height);
-
-        if ($isValidImage) {
-            $thumbnail = $this->generateThumbnail(
-                file: $file,
-                width: $width,
-                height: $height,
-                crop: $crop,
-            );
-
-            $url = $thumbnail->url;
-            $placeholder = $this->getPlaceholderString(
-                width: $thumbnail->width,
-                height: $thumbnail->height
-            );
-            $width = $thumbnail->width;
-            $height = $thumbnail->height;
-        }
-
-        if ($isSvg) {
-            $url = $file->getURL();
-            $width = $svgData->width;
-            $height = $svgData->height;
-        }
-
-        if ($isValid) {
-            $alt = ($alt === null) ? $this->getModifiedName(file: $file) : $alt;
-        } else {
-            $alt = ($alt === null) ? 'Placeholder' : $alt;
-        }
-
-        return new ImageData(
-            isValid: $isValid,
-            isImage: $isValidImage,
-            isSvg: $isSvg,
-            id: $file?->getFileID(),
-            url: $url,
-            placeholder: $placeholder,
-            width: $width,
-            height: $height,
-            alt: $alt,
-            file: $fileData,
-            svg: $svgData,
-        );
-    }
-
-    /**
      * Get list of Images by selected File Set.
      *
      * You can provide File Set ID, File Set Name or File Set Object.
@@ -220,9 +143,9 @@ class ImageUtility extends FileUtility
         /* @var FileEntity|FileVersionEntity $file */
         $file = $this->convertToFileObject(file: $file);
 
-        $isValidImage = $this->isValidImage(file: $file);
+        $isImage = $this->isImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
-        $isValid = ($isValidImage or $isSvg);
+        $isValid = ($isImage or $isSvg);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
@@ -231,7 +154,7 @@ class ImageUtility extends FileUtility
         $fullscreenUrl = null;
         $placeholder = $this->getPlaceholderString(width: $width, height: $height);
 
-        if ($isValidImage) {
+        if ($isImage) {
             $thumbnail = $this->generateThumbnail(
                 file: $file,
                 width: $width,
@@ -278,7 +201,7 @@ class ImageUtility extends FileUtility
 
         return new GalleryImageData(
             isValid: $isValid,
-            isImage: $isValidImage,
+            isImage: $isImage,
             isSvg: $isSvg,
             id: $file?->getFileID(),
             url: $url,
@@ -419,10 +342,10 @@ class ImageUtility extends FileUtility
         /* @var FileEntity|FileVersionEntity $file */
         $file = $this->convertToFileObject(file: $file);
 
-        $isValidImage = $this->isValidImage(file: $file);
+        $isImage = $this->isImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
         $isVideo = $this->isVideo(file: $file);
-        $isValid = ($isValidImage or $isSvg or $isVideo);
+        $isValid = ($isImage or $isSvg or $isVideo);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
@@ -438,7 +361,7 @@ class ImageUtility extends FileUtility
         $textAlignment = null;
         $newWindow = false;
 
-        if ($isValidImage) {
+        if ($isImage) {
             $thumbnail = $this->generateThumbnail(
                 file: $file,
                 width: $width,
@@ -520,7 +443,7 @@ class ImageUtility extends FileUtility
 
         return new SliderImageData(
             isValid: $isValid,
-            isImage: $isValidImage,
+            isImage: $isImage,
             isVideo: $isVideo,
             isSvg: $isSvg,
             id: $file?->getFileID(),
@@ -606,55 +529,10 @@ class ImageUtility extends FileUtility
     }
 
     /**
-     * Get an inline svg string that can be used for image "src" attribute when lazy-loading.
-     *
-     * @param int $width
-     * @param int $height
-     * @return string
-     */
-    public function getPlaceholderString(int $width, int $height): string
-    {
-        return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20' . $width . '%20' . $height . '%22%20%2F%3E';
-    }
-
-    /**
-     * @param FileEntity|FileVersionEntity $file "File Object or File Version Object"
-     * @param int $width
-     * @param int $height
-     * @param bool $crop
-     * @return ThumbnailData
-     */
-    public function generateThumbnail(
-        FileEntity|FileVersionEntity $file,
-        int                          $width,
-        int                          $height,
-        bool                         $crop
-    ): ThumbnailData
-    {
-        /* @var FileEntity|FileVersionEntity $file */
-
-        $thumbnailUrl = $file->getURL();
-        $thumbnailWidth = $file->getAttribute('width');
-        $thumbnailHeight = $file->getAttribute('height');
-        if ($thumbnailWidth > $width or $thumbnailHeight > $height) {
-            $thumbnail = $this->ih->getThumbnail($file, $width, $height, $crop);
-            $thumbnailUrl = $thumbnail->src;
-            $thumbnailWidth = $thumbnail->width;
-            $thumbnailHeight = $thumbnail->height;
-        }
-
-        return new ThumbnailData(
-            url: (string)$thumbnailUrl,
-            width: (int)$thumbnailWidth,
-            height: (int)$thumbnailHeight,
-        );
-    }
-
-    /**
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return bool
      */
-    public function isValidImage(FileEntity|FileVersionEntity|null $file): bool
+    public function isImage(FileEntity|FileVersionEntity|null $file): bool
     {
         /* @var FileEntity|FileVersionEntity $file */
 
@@ -665,6 +543,83 @@ class ImageUtility extends FileUtility
         if (!$file->canEdit()) return false;
 
         return true;
+    }
+
+    /**
+     * Create Image using BasicThumbnailer service ('helper/image') and get common info.
+     *
+     * You can provide File ID, File Object or File Version Object.
+     *
+     * @param int|FileEntity|FileVersionEntity|null $file "File ID, File Object or File Version Object"
+     * @param int $width
+     * @param int $height
+     * @param bool $crop
+     * @param string|null $alt "Provide string to replace default alt attribute (modified Concrete Title attribute)."
+     * @return ImageData
+     */
+    public function getImage(
+        int|FileEntity|FileVersionEntity|null $file,
+        int                                   $width,
+        int                                   $height,
+        bool                                  $crop,
+        ?string                               $alt = null,
+    ): ImageData
+    {
+        /* @var FileEntity|FileVersionEntity $file */
+        $file = $this->convertToFileObject(file: $file);
+
+        $isImage = $this->isImage(file: $file);
+        $isSvg = $this->isSvg(file: $file);
+        $isValid = ($isImage or $isSvg);
+
+        $fileData = $this->getFile(file: $file);
+        $svgData = $this->getSvg(file: $file);
+
+        $url = null;
+        $placeholder = $this->getPlaceholderString(width: $width, height: $height);
+
+        if ($isImage) {
+            $thumbnail = $this->generateThumbnail(
+                file: $file,
+                width: $width,
+                height: $height,
+                crop: $crop,
+            );
+
+            $url = $thumbnail->url;
+            $placeholder = $this->getPlaceholderString(
+                width: $thumbnail->width,
+                height: $thumbnail->height
+            );
+            $width = $thumbnail->width;
+            $height = $thumbnail->height;
+        }
+
+        if ($isSvg) {
+            $url = $file->getURL();
+            $width = $svgData->width;
+            $height = $svgData->height;
+        }
+
+        if ($isValid) {
+            $alt = ($alt === null) ? $this->getModifiedName(file: $file) : $alt;
+        } else {
+            $alt = ($alt === null) ? 'Placeholder' : $alt;
+        }
+
+        return new ImageData(
+            isValid: $isValid,
+            isImage: $isImage,
+            isSvg: $isSvg,
+            id: $file?->getFileID(),
+            url: $url,
+            placeholder: $placeholder,
+            width: $width,
+            height: $height,
+            alt: $alt,
+            file: $fileData,
+            svg: $svgData,
+        );
     }
 
     /**
@@ -680,28 +635,6 @@ class ImageUtility extends FileUtility
         }
 
         if (strtolower($file->getExtension()) !== ExtensionEnum::SVG_EXTENSION->value) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
-     * @return bool
-     */
-    public function isVideo(FileEntity|FileVersionEntity|null $file): bool
-    {
-        /* @var FileEntity|FileVersionEntity $file */
-
-        if (!($file instanceof FileEntity) and !($file instanceof FileVersionEntity)) {
-            return false;
-        }
-
-        $extension = strtolower($file->getExtension());
-        $videoExtensions = array_column(VideoExtensionEnum::cases(), 'value');
-
-        if (!in_array($extension, $videoExtensions)) {
             return false;
         }
 
@@ -767,6 +700,28 @@ class ImageUtility extends FileUtility
 
     /**
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
+     * @return bool
+     */
+    public function isVideo(FileEntity|FileVersionEntity|null $file): bool
+    {
+        /* @var FileEntity|FileVersionEntity $file */
+
+        if (!($file instanceof FileEntity) and !($file instanceof FileVersionEntity)) {
+            return false;
+        }
+
+        $extension = strtolower($file->getExtension());
+        $videoExtensions = array_column(VideoExtensionEnum::cases(), 'value');
+
+        if (!in_array($extension, $videoExtensions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return VideoData
      */
     public function getVideo(FileEntity|FileVersionEntity|null $file): VideoData
@@ -804,4 +759,50 @@ class ImageUtility extends FileUtility
             fullSize: $fullSize,
         );
     }
+
+    /**
+     * Get an inline svg string that can be used for image "src" attribute when lazy-loading.
+     *
+     * @param int $width
+     * @param int $height
+     * @return string
+     */
+    public function getPlaceholderString(int $width, int $height): string
+    {
+        return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20' . $width . '%20' . $height . '%22%20%2F%3E';
+    }
+
+    /**
+     * @param FileEntity|FileVersionEntity $file "File Object or File Version Object"
+     * @param int $width
+     * @param int $height
+     * @param bool $crop
+     * @return ThumbnailData
+     */
+    public function generateThumbnail(
+        FileEntity|FileVersionEntity $file,
+        int                          $width,
+        int                          $height,
+        bool                         $crop
+    ): ThumbnailData
+    {
+        /* @var FileEntity|FileVersionEntity $file */
+
+        $thumbnailUrl = $file->getURL();
+        $thumbnailWidth = $file->getAttribute('width');
+        $thumbnailHeight = $file->getAttribute('height');
+        if ($thumbnailWidth > $width or $thumbnailHeight > $height) {
+            $thumbnail = $this->ih->getThumbnail($file, $width, $height, $crop);
+            $thumbnailUrl = $thumbnail->src;
+            $thumbnailWidth = $thumbnail->width;
+            $thumbnailHeight = $thumbnail->height;
+        }
+
+        return new ThumbnailData(
+            url: (string)$thumbnailUrl,
+            width: (int)$thumbnailWidth,
+            height: (int)$thumbnailHeight,
+        );
+    }
+
 }
