@@ -9,12 +9,15 @@ use ConcreteCmsUtility\DTO\ImageData;
 use ConcreteCmsUtility\DTO\SliderImageData;
 use ConcreteCmsUtility\DTO\SvgData;
 use ConcreteCmsUtility\DTO\ThumbnailData;
+use ConcreteCmsUtility\DTO\VideoData;
 use ConcreteCmsUtility\Enums\ExtensionEnum;
 use Concrete\Core\Entity\File\File as FileEntity;
 use Concrete\Core\Entity\File\Version as FileVersionEntity;
 use Concrete\Core\File\Image\BasicThumbnailer;
 use Concrete\Core\File\Set\Set as FileSet;
 use Concrete\Core\Page\Page;
+use ConcreteCmsUtility\Enums\VideoExtensionEnum;
+use getID3;
 
 /**
  * Opinionated image-related helpers for Concrete 9 and PHP 8.1+.
@@ -418,10 +421,12 @@ class ImageUtility extends FileUtility
 
         $isValidImage = $this->isValidImage(file: $file);
         $isSvg = $this->isSvg(file: $file);
-        $isValid = ($isValidImage or $isSvg);
+        $isVideo = $this->isVideo(file: $file);
+        $isValid = ($isValidImage or $isSvg or $isVideo);
 
         $fileData = $this->getFile(file: $file);
         $svgData = $this->getSvg(file: $file);
+        $videoData = $this->getVideo(file: $file);
 
         $url = null;
         $srcset = null;
@@ -430,7 +435,7 @@ class ImageUtility extends FileUtility
         $subtitle = null;
         $link = null;
         $buttonText = null;
-        $textAlignment = false;
+        $textAlignment = null;
         $newWindow = false;
 
         if ($isValidImage) {
@@ -454,6 +459,12 @@ class ImageUtility extends FileUtility
             $url = $file->getURL();
             $width = $svgData->width;
             $height = $svgData->height;
+        }
+
+        if ($isVideo) {
+            $url = $file->getURL();
+            $width = $videoData->width;
+            $height = $videoData->height;
         }
 
         if ($isValid) {
@@ -510,6 +521,7 @@ class ImageUtility extends FileUtility
         return new SliderImageData(
             isValid: $isValid,
             isImage: $isValidImage,
+            isVideo: $isVideo,
             isSvg: $isSvg,
             id: $file?->getFileID(),
             url: $url,
@@ -527,6 +539,7 @@ class ImageUtility extends FileUtility
             newWindow: $newWindow,
             file: $fileData,
             svg: $svgData,
+            video: $videoData,
         );
     }
 
@@ -675,6 +688,28 @@ class ImageUtility extends FileUtility
 
     /**
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
+     * @return bool
+     */
+    public function isVideo(FileEntity|FileVersionEntity|null $file): bool
+    {
+        /* @var FileEntity|FileVersionEntity $file */
+
+        if (!($file instanceof FileEntity) and !($file instanceof FileVersionEntity)) {
+            return false;
+        }
+
+        $extension = strtolower($file->getExtension());
+        $videoExtensions = array_column(VideoExtensionEnum::cases(), 'value');
+
+        if (!in_array($extension, $videoExtensions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return SvgData
      */
     private function getSvg(FileEntity|FileVersionEntity|null $file): SvgData
@@ -727,6 +762,46 @@ class ImageUtility extends FileUtility
             height: $height,
             ratio: $ratio,
             inlineCode: $inlineCode,
+        );
+    }
+
+    /**
+     * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
+     * @return VideoData
+     */
+    private function getVideo(FileEntity|FileVersionEntity|null $file): VideoData
+    {
+        $width = null;
+        $height = null;
+        $duration = null;
+        $size = null;
+        $fullSize = null;
+        $ratio = null;
+
+        if ($this->isVideo($file)) {
+
+            $path = realpath($_SERVER['DOCUMENT_ROOT']) . $file->getRelativePath();
+
+            if (class_exists(getID3::class)) {
+                $getID3 = new getID3();
+                $fileInfo = $getID3->analyze($path);
+
+                $width = $fileInfo['video']['resolution_x'];
+                $height = $fileInfo['video']['resolution_y'];
+                $duration = (float)$fileInfo['playtime_seconds'];
+                $size = (string)$file->getSize();
+                $fullSize = (int)$file->getFullSize();
+                $ratio = (float)number_format(($height / $width) * 100, 5, '.', '');
+            }
+        }
+
+        return new VideoData(
+            width: $width,
+            height: $height,
+            ratio: $ratio,
+            duration: $duration,
+            size: $size,
+            fullSize: $fullSize,
         );
     }
 }

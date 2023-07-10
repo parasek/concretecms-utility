@@ -81,6 +81,15 @@ $classLoader->addPrefix('ConcreteCmsUtility', DIR_APPLICATION . '/' . DIRNAME_CL
 $classLoader->register();
 ```
 
+Visit https://github.com/JamesHeinrich/getID3 and download latest version of getID3 library.
+
+
+Copy content of that repository into `application/src` and add load it somewhere (for example in `application/bootstrap/app.php`).
+```php
+require_once( DIR_APPLICATION . '/' . DIRNAME_CLASSES . '/getID3/getid3/getid3.php');
+```
+
+
 ## Service provider
 You can register service provider in `application/config/app.php` in `providers` section
 
