@@ -50,6 +50,8 @@ getFilesByMainFile();
 getMainFileset();
 getModifiedName();
 convertToFileObject();
+listFilesFromFileSet();
+listFilesFromFirstFileSet();
 
 // $imageUtility
 getImage();
@@ -61,6 +63,12 @@ getGalleryImagesByMainImage();
 getSliderImage
 getSliderImagesByFileset();
 getPlaceholderString();
+generateThumbnail();
+isValidImage();
+isSvg();
+isVideo();
+getSvg();
+getVideo();
 ```
 
 ## Installation

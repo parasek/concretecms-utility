@@ -624,7 +624,7 @@ class ImageUtility extends FileUtility
      * @param bool $crop
      * @return ThumbnailData
      */
-    private function generateThumbnail(
+    public function generateThumbnail(
         FileEntity|FileVersionEntity $file,
         int                          $width,
         int                          $height,
@@ -654,7 +654,7 @@ class ImageUtility extends FileUtility
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return bool
      */
-    private function isValidImage(FileEntity|FileVersionEntity|null $file): bool
+    public function isValidImage(FileEntity|FileVersionEntity|null $file): bool
     {
         /* @var FileEntity|FileVersionEntity $file */
 
@@ -671,7 +671,7 @@ class ImageUtility extends FileUtility
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return bool
      */
-    private function isSvg(FileEntity|FileVersionEntity|null $file): bool
+    public function isSvg(FileEntity|FileVersionEntity|null $file): bool
     {
         /* @var FileEntity|FileVersionEntity $file */
 
@@ -712,7 +712,7 @@ class ImageUtility extends FileUtility
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return SvgData
      */
-    private function getSvg(FileEntity|FileVersionEntity|null $file): SvgData
+    public function getSvg(FileEntity|FileVersionEntity|null $file): SvgData
     {
         $width = null;
         $height = null;
@@ -769,7 +769,7 @@ class ImageUtility extends FileUtility
      * @param FileEntity|FileVersionEntity|null $file "File Object or File Version Object"
      * @return VideoData
      */
-    private function getVideo(FileEntity|FileVersionEntity|null $file): VideoData
+    public function getVideo(FileEntity|FileVersionEntity|null $file): VideoData
     {
         $width = null;
         $height = null;
