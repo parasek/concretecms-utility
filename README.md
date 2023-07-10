@@ -50,9 +50,10 @@ getFilesByMainFile();
 getMainFileset();
 getModifiedName();
 convertToFileObject();
+listFilesFromFileSet();
+listFilesFromFirstFileSet();
 
 // $imageUtility
-getImage();
 getImagesByFileSet();
 getImagesByMainImage();
 getGalleryImage();
@@ -61,6 +62,13 @@ getGalleryImagesByMainImage();
 getSliderImage
 getSliderImagesByFileset();
 getPlaceholderString();
+generateThumbnail();
+isImage();
+getImage();
+isSvg();
+getSvg();
+isVideo();
+getVideo();
 ```
 
 ## Installation
@@ -80,6 +88,15 @@ $classLoader = new \Symfony\Component\ClassLoader\Psr4ClassLoader();
 $classLoader->addPrefix('ConcreteCmsUtility', DIR_APPLICATION . '/' . DIRNAME_CLASSES . '/' . 'ConcreteCmsUtility');
 $classLoader->register();
 ```
+
+Visit https://github.com/JamesHeinrich/getID3 and download latest version of getID3 library.
+
+
+Copy content of that repository into `application/src` and add load it somewhere (for example in `application/bootstrap/app.php`).
+```php
+require_once( DIR_APPLICATION . '/' . DIRNAME_CLASSES . '/getID3/getid3/getid3.php');
+```
+
 
 ## Service provider
 You can register service provider in `application/config/app.php` in `providers` section

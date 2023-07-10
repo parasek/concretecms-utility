@@ -168,7 +168,7 @@ class FileUtility
      * @param int|string|FileSet|null $fileSet
      * @return array
      */
-    protected function listFilesFromFileSet(int|string|FileSet|null $fileSet): array
+    public function listFilesFromFileSet(int|string|FileSet|null $fileSet): array
     {
         $output = [];
 
@@ -196,7 +196,7 @@ class FileUtility
      * @param int|FileEntity|FileVersionEntity|null $file "File ID, File Object or File Version Object"
      * @return array
      */
-    protected function listFilesFromFirstFileSet(int|FileEntity|FileVersionEntity|null $file): array
+    public function listFilesFromFirstFileSet(int|FileEntity|FileVersionEntity|null $file): array
     {
         $output = [];
 
