@@ -22,6 +22,7 @@ class SliderImageData
         public readonly ?string            $placeholder,
         public readonly ?int               $width,
         public readonly ?int               $height,
+        public readonly ?float             $ratio,
         public readonly ?string            $alt,
         public readonly ?string            $title,
         public readonly ?string            $subtitle,

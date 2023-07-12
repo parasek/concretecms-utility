@@ -14,6 +14,11 @@ class VideoData
         public readonly bool                 $isValid,
         public readonly ?int                 $id,
         public readonly ?string              $url,
+        public readonly ?int                 $width,
+        public readonly ?int                 $height,
+        public readonly ?float               $ratio,
+        public readonly ?float               $duration,
+        public readonly ?string              $type,
         public readonly ?FileData            $file,
         public readonly ?VideoAdditionalData $video,
     )

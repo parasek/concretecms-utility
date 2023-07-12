@@ -68,6 +68,7 @@ trait VideoTrait
         $size = null;
         $fullSize = null;
         $ratio = null;
+        $type = null;
 
         if ($isValid) {
 
@@ -76,13 +77,13 @@ trait VideoTrait
             if (class_exists(getID3::class)) {
                 $getID3 = new getID3();
                 $fileInfo = $getID3->analyze($path);
-
                 $width = $fileInfo['video']['resolution_x'];
                 $height = $fileInfo['video']['resolution_y'];
                 $duration = (float)$fileInfo['playtime_seconds'];
                 $size = (string)$file->getSize();
                 $fullSize = (int)$file->getFullSize();
                 $ratio = (float)number_format(($height / $width) * 100, 5, '.', '');
+                $type = $fileInfo['mime_type'];
             }
         }
 
@@ -90,6 +91,11 @@ trait VideoTrait
             isValid: $isValid,
             id: $id,
             url: $url,
+            width: $width,
+            height: $height,
+            ratio: $ratio,
+            duration: $duration,
+            type: $type,
             file: $this->getFile($file),
             video: new VideoAdditionalData(
                 width: $width,

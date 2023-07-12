@@ -362,6 +362,8 @@ class ImageUtility extends FileUtility
         $textAlignment = null;
         $newWindow = false;
 
+        $ratio = ($height / $width) * 100;
+
         if ($isImage) {
             $thumbnail = $this->generateThumbnail(
                 file: $file,
@@ -456,6 +458,7 @@ class ImageUtility extends FileUtility
             placeholder: $placeholder,
             width: $width,
             height: $height,
+            ratio: $ratio,
             alt: $alt,
             title: $title,
             subtitle: $subtitle,
