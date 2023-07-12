@@ -1,3 +1,8 @@
+# 4.0.0
+
+- Added more information for video
+- Refactored code
+
 # 3.0.0
 
 - Now, getSliderImage() and getSliderImagesByFileSet() methods consider video files as valid. New property isVideo was
