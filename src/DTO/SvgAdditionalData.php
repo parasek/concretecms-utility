@@ -8,7 +8,7 @@ namespace ConcreteCmsUtility\DTO;
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link https://github.com/parasek/concretecms-utility
  */
-class SvgData
+class SvgAdditionalData
 {
     public function __construct(
         public readonly ?int    $width,

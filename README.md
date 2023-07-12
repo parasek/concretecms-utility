@@ -1,6 +1,6 @@
 # Custom utility classes for Concrete CMS
 
-Few handy, opinionated helpers for dealing with Files/Images when generating Images/Galleries/Sliders/File Lists etc.
+Few handy, opinionated helpers for dealing with Files, Images, Videos when generating Images/Galleries/Sliders/File Lists etc.
 
 Requires Concrete 9 and PHP 8.1.
 
@@ -11,18 +11,20 @@ If not, add respective code:
 // Hints for services
 /** @var \ConcreteCmsUtility\FileUtility $fileUtility */
 /** @var \ConcreteCmsUtility\ImageUtility $imageUtility */
+/** @var \ConcreteCmsUtility\VideoUtility $videoUtility */
 
 // Hints for returned objects
 /** @var \ConcreteCmsUtility\DTO\FileData $file */
-/** @var \ConcreteCmsUtility\DTO\ImageData $image */
 /** @var \ConcreteCmsUtility\DTO\GalleryImageData $image */
+/** @var \ConcreteCmsUtility\DTO\ImageData $image */
 /** @var \ConcreteCmsUtility\DTO\SliderImageData $image */
+/** @var \ConcreteCmsUtility\DTO\VideoeData $video */
 
 // Hints for arrays (when using foreach loop etc.).
 /** @var \ConcreteCmsUtility\DTO\ImageData[] $images */
 ```
 
-You can access returned values like objects:
+You can access returned values as objects:
 
 ```php
 $file->url;
@@ -32,43 +34,6 @@ $image->width;
 $image->height;
 
 $image->file->url;
-
-// etc.
-```
-
-
-
-Available methods:
-```
-// You will find more information about methods
-// in phpDoc block comments.
-
-// $fileUtility
-getFile();
-getFilesByFileSet();
-getFilesByMainFile();
-getMainFileset();
-getModifiedName();
-convertToFileObject();
-listFilesFromFileSet();
-listFilesFromFirstFileSet();
-
-// $imageUtility
-getImagesByFileSet();
-getImagesByMainImage();
-getGalleryImage();
-getGalleryImagesByFileSet();
-getGalleryImagesByMainImage();
-getSliderImage
-getSliderImagesByFileset();
-getPlaceholderString();
-generateThumbnail();
-isImage();
-getImage();
-isSvg();
-getSvg();
-isVideo();
-getVideo();
 ```
 
 ## Installation
@@ -91,14 +56,15 @@ $classLoader->register();
 
 Visit https://github.com/JamesHeinrich/getID3 and download latest version of getID3 library.
 
+Copy content of that repository into `application/src` and add load it somewhere (for example
+in `application/bootstrap/app.php`).
 
-Copy content of that repository into `application/src` and add load it somewhere (for example in `application/bootstrap/app.php`).
 ```php
 require_once( DIR_APPLICATION . '/' . DIRNAME_CLASSES . '/getID3/getid3/getid3.php');
 ```
 
-
 ## Service provider
+
 You can register service provider in `application/config/app.php` in `providers` section
 
 ```php
@@ -106,10 +72,13 @@ You can register service provider in `application/config/app.php` in `providers`
     'concrete_cms_utility' => ConcreteCmsUtility\ServiceProvider::class,
 ],
 ```
+
 Then you will be able to use shorthands like:
+
 ```php
 app('utils/image')->getPlaceholderString(width: 100, height: 100);
 $app->make('utils/file')->getFile(file: 1)->url;
+$this->app->make('utils/video')->getVideo(file: 1)->url;
 ```
 
 ## Example usage
@@ -148,6 +117,7 @@ class CustomClass
 ```
 
 Example:
+
 ```php
 <?php
 /** @var \ConcreteCmsUtility\ImageUtility $imageUtility */
