@@ -411,7 +411,12 @@ class ImageUtility extends FileUtility
             $i = 0;
             foreach ($dimensions as $dimension) {
                 $i++;
-                $srcsetUrl = $this->ih->getThumbnail($file, $dimension['width'], $dimension['height'], $crop)->src;
+                $srcsetUrl = $this->generateThumbnail(
+                    file: $file,
+                    width: $dimension['width'],
+                    height: $dimension['height'],
+                    crop: $crop,
+                )->url;
                 $intrinsicWidthInPixels = $dimension['width'];
                 $srcset .= $srcsetUrl . ' ' . $intrinsicWidthInPixels . 'w';
                 if ($i != count($dimensions)) {
