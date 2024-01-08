@@ -1,3 +1,6 @@
+# 4.0.1
+- Fixed slider srcset url (display original image if dimensions match)
+
 # 4.0.0
 
 - Added more information for video
