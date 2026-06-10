@@ -1,3 +1,6 @@
+# 4.1.0
+- Added file object to file data
+
 # 4.0.1
 - Fixed slider srcset url (display original image if dimensions match)
 
