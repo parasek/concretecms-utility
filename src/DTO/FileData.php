@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ConcreteCmsUtility\DTO;
 
+use Concrete\Core\Entity\File\File as FileEntity;
+
 /**
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link https://github.com/parasek/concretecms-utility
@@ -31,6 +33,7 @@ class FileData
      * @param int|null $width
      * @param int|null $height
      * @param int|null $duration
+     * @param int|FileEntity $fileObject
      */
     public function __construct(
         public readonly bool    $isValid,
@@ -44,6 +47,7 @@ class FileData
         public readonly ?int    $width,
         public readonly ?int    $height,
         public readonly ?int    $duration,
+        public readonly ?FileEntity $fileObject,
     )
     {
     }

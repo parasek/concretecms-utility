@@ -46,6 +46,7 @@ class FileUtility
             width: is_object($file) ? (int)$file->getAttribute('width') : null,
             height: is_object($file) ? (int)$file->getAttribute('height') : null,
             duration: is_object($file) ? (int)$file->getAttribute('duration') : null,
+            fileObject: $file,
         );
     }
 
