@@ -9,12 +9,13 @@ use ConcreteCmsUtility\DTO\ImageData;
 use ConcreteCmsUtility\DTO\SliderImageData;
 use Concrete\Core\Entity\File\File as FileEntity;
 use Concrete\Core\Entity\File\Version as FileVersionEntity;
-use Concrete\Core\File\Image\BasicThumbnailer;
 use Concrete\Core\File\Set\Set as FileSet;
 use Concrete\Core\Page\Page;
+use ConcreteCmsUtility\Image\ThumbnailGenerator;
 use ConcreteCmsUtility\Traits\ImageTrait;
 use ConcreteCmsUtility\Traits\SvgTrait;
 use ConcreteCmsUtility\Traits\VideoTrait;
+use InvalidArgumentException;
 
 /**
  * Opinionated image-related helpers for Concrete 9 and PHP 8.1+.
@@ -26,11 +27,8 @@ class ImageUtility extends FileUtility
 {
     use ImageTrait, SvgTrait, VideoTrait;
 
-    private BasicThumbnailer $ih;
-
-    public function __construct(BasicThumbnailer $ih)
+    public function __construct(private readonly ThumbnailGenerator $thumbnailGenerator)
     {
-        $this->ih = $ih;
     }
 
     /**
@@ -43,6 +41,10 @@ class ImageUtility extends FileUtility
      * @param int $height
      * @param bool $crop
      * @param string|null $alt "Provide string to set single alt attribute for all Images."
+     * @param string|null $customName Filename base for generated variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return ImageData[]
      */
     public function getImagesByFileSet(
@@ -50,7 +52,11 @@ class ImageUtility extends FileUtility
         int                     $width,
         int                     $height,
         bool                    $crop,
-        ?string                 $alt = null
+        ?string                 $alt = null,
+        ?string                 $customName = null,
+        ?string                 $format = null,
+        ?int                    $quality = null,
+        ?int                    $pngCompressionLevel = null,
     ): array
     {
         $output = [];
@@ -64,6 +70,10 @@ class ImageUtility extends FileUtility
                 height: $height,
                 crop: $crop,
                 alt: $alt,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
         }
 
@@ -82,6 +92,10 @@ class ImageUtility extends FileUtility
      * @param int $height
      * @param bool $crop
      * @param string|null $alt "Provide string to set single alt attribute for all Images."
+     * @param string|null $customName Filename base for generated variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return ImageData[]
      */
     public function getImagesByMainImage(
@@ -89,7 +103,11 @@ class ImageUtility extends FileUtility
         int                                   $width,
         int                                   $height,
         bool                                  $crop,
-        ?string                               $alt = null
+        ?string                               $alt = null,
+        ?string                               $customName = null,
+        ?string                               $format = null,
+        ?int                                  $quality = null,
+        ?int                                  $pngCompressionLevel = null,
     ): array
     {
         $output = [];
@@ -103,6 +121,10 @@ class ImageUtility extends FileUtility
                 height: $height,
                 crop: $crop,
                 alt: $alt,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
         }
 
@@ -110,7 +132,7 @@ class ImageUtility extends FileUtility
     }
 
     /**
-     * Create Image using BasicThumbnailer service ('helper/image') and get common info.
+     * Generate cached image variants and get common info.
      *
      * Additional Image (for fullscreen lightbox) will be created.
      *
@@ -125,6 +147,10 @@ class ImageUtility extends FileUtility
      * @param int $fullscreenWidth
      * @param int $fullscreenHeight
      * @param bool $fullscreenCrop
+     * @param string|null $customName Filename base for both image variants.
+     * @param string|null $format Output format for both variants, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return GalleryImageData
      */
     public function getGalleryImage(
@@ -137,6 +163,10 @@ class ImageUtility extends FileUtility
         int                                   $fullscreenWidth = 1920,
         int                                   $fullscreenHeight = 1080,
         bool                                  $fullscreenCrop = false,
+        ?string                               $customName = null,
+        ?string                               $format = null,
+        ?int                                  $quality = null,
+        ?int                                  $pngCompressionLevel = null,
     ): GalleryImageData
     {
         /* @var FileEntity|FileVersionEntity $file */
@@ -159,6 +189,10 @@ class ImageUtility extends FileUtility
                 width: $width,
                 height: $height,
                 crop: $crop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
 
             $url = $thumbnail->url;
@@ -174,6 +208,10 @@ class ImageUtility extends FileUtility
                 width: $fullscreenWidth,
                 height: $fullscreenHeight,
                 crop: $fullscreenCrop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
 
             $fullscreenUrl = $fullscreenThumbnail->url;
@@ -231,6 +269,10 @@ class ImageUtility extends FileUtility
      * @param int $fullscreenWidth
      * @param int $fullscreenHeight
      * @param bool $fullscreenCrop
+     * @param string|null $customName Filename base for generated variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return GalleryImageData[]
      */
     public function getGalleryImagesByFileSet(
@@ -243,6 +285,10 @@ class ImageUtility extends FileUtility
         int                     $fullscreenWidth = 1920,
         int                     $fullscreenHeight = 1080,
         bool                    $fullscreenCrop = false,
+        ?string                 $customName = null,
+        ?string                 $format = null,
+        ?int                    $quality = null,
+        ?int                    $pngCompressionLevel = null,
     ): array
     {
         $output = [];
@@ -260,6 +306,10 @@ class ImageUtility extends FileUtility
                 fullscreenWidth: $fullscreenWidth,
                 fullscreenHeight: $fullscreenHeight,
                 fullscreenCrop: $fullscreenCrop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
         }
 
@@ -282,6 +332,10 @@ class ImageUtility extends FileUtility
      * @param int $fullscreenWidth
      * @param int $fullscreenHeight
      * @param bool $fullscreenCrop
+     * @param string|null $customName Filename base for generated variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return GalleryImageData[]
      */
     public function getGalleryImagesByMainImage(
@@ -294,6 +348,10 @@ class ImageUtility extends FileUtility
         int                                   $fullscreenWidth = 1920,
         int                                   $fullscreenHeight = 1080,
         bool                                  $fullscreenCrop = false,
+        ?string                               $customName = null,
+        ?string                               $format = null,
+        ?int                                  $quality = null,
+        ?int                                  $pngCompressionLevel = null,
     ): array
     {
         $output = [];
@@ -311,6 +369,10 @@ class ImageUtility extends FileUtility
                 fullscreenWidth: $fullscreenWidth,
                 fullscreenHeight: $fullscreenHeight,
                 fullscreenCrop: $fullscreenCrop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
         }
 
@@ -327,6 +389,10 @@ class ImageUtility extends FileUtility
      * @param string|null $alt
      * @param array $additionalImageWidths
      * @param string|null $sizes
+     * @param string|null $customName Filename base for the image and srcset variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return SliderImageData
      * @see getSliderImagesByFileSet()
      */
@@ -338,8 +404,16 @@ class ImageUtility extends FileUtility
         ?string                               $alt = null,
         array                                 $additionalImageWidths = [],
         ?string                               $sizes = null,
+        ?string                               $customName = null,
+        ?string                               $format = null,
+        ?int                                  $quality = null,
+        ?int                                  $pngCompressionLevel = null,
     ): SliderImageData
     {
+        if ($width < 1 || $height < 1) {
+            throw new InvalidArgumentException('Image dimensions must be positive integers.');
+        }
+
         /* @var FileEntity|FileVersionEntity $file */
         $file = $this->convertToFileObject(file: $file);
 
@@ -365,11 +439,21 @@ class ImageUtility extends FileUtility
         $ratio = ($height / $width) * 100;
 
         if ($isImage) {
+            foreach ($additionalImageWidths as $additionalImageWidth) {
+                if (!is_int($additionalImageWidth) || $additionalImageWidth < 1) {
+                    throw new InvalidArgumentException('Additional image widths must be positive integers.');
+                }
+            }
+
             $thumbnail = $this->generateThumbnail(
                 file: $file,
                 width: $width,
                 height: $height,
                 crop: $crop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
 
             $url = $thumbnail->url;
@@ -400,30 +484,29 @@ class ImageUtility extends FileUtility
         }
 
         if ($isImage) {
-            $dimensions = [];
+            $imageSources = [$width => $url . ' ' . $width . 'w'];
             foreach ($additionalImageWidths as $additionalImageWidth) {
-                $dimensions[] = [
-                    'width' => $additionalImageWidth,
-                    'height' => (int)round(($height / $width) * $additionalImageWidth)
-                ];
+                if (isset($imageSources[$additionalImageWidth])) {
+                    continue;
+                }
+
+                $thumbnail = $this->generateThumbnail(
+                    file: $file,
+                    width: $additionalImageWidth,
+                    height: max(1, (int) round(($height / $width) * $additionalImageWidth)),
+                    crop: $crop,
+                    customName: $customName,
+                    format: $format,
+                    quality: $quality,
+                    pngCompressionLevel: $pngCompressionLevel,
+                );
+                // Describe actual dimensions and keep one candidate for each width.
+                $imageSources[$thumbnail->width] ??= $thumbnail->url . ' ' . $thumbnail->width . 'w';
             }
 
-            $i = 0;
-            foreach ($dimensions as $dimension) {
-                $i++;
-                $srcsetUrl = $this->generateThumbnail(
-                    file: $file,
-                    width: $dimension['width'],
-                    height: $dimension['height'],
-                    crop: $crop,
-                )->url;
-                $intrinsicWidthInPixels = $dimension['width'];
-                $srcset .= $srcsetUrl . ' ' . $intrinsicWidthInPixels . 'w';
-                if ($i != count($dimensions)) {
-                    $srcset .= ',' . PHP_EOL;
-                }
-            }
-            $sizes = '(max-width: 767px)  100vw,
+            ksort($imageSources, SORT_NUMERIC);
+            $srcset = implode(', ', $imageSources);
+            $sizes ??= '(max-width: 767px)  100vw,
                       (max-width: 991px)  740px,
                       (max-width: 1199px) 960px,
                       (max-width: 1649px) 1140px,
@@ -507,6 +590,10 @@ class ImageUtility extends FileUtility
      * @param string|null $alt "Provide string to set single alt attribute for all Slider Images."
      * @param array $additionalImageWidths
      * @param string|null $sizes
+     * @param string|null $customName Filename base for generated variants.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality from 0 to 100.
+     * @param int|null $pngCompressionLevel PNG compression from 0 to 9.
      * @return SliderImageData[]
      */
     public function getSliderImagesByFileSet(
@@ -517,6 +604,10 @@ class ImageUtility extends FileUtility
         ?string                 $alt = null,
         array                   $additionalImageWidths = [],
         ?string                 $sizes = null,
+        ?string                 $customName = null,
+        ?string                 $format = null,
+        ?int                    $quality = null,
+        ?int                    $pngCompressionLevel = null,
     ): array
     {
         /* @var FileEntity|FileVersionEntity $file */
@@ -533,6 +624,11 @@ class ImageUtility extends FileUtility
                 crop: $crop,
                 alt: $alt,
                 additionalImageWidths: $additionalImageWidths,
+                sizes: $sizes,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
         }
 

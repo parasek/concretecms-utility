@@ -2,7 +2,7 @@
 
 Few handy, opinionated helpers for dealing with Files, Images, Videos when generating Images/Galleries/Sliders/File Lists etc.
 
-Requires Concrete 9 and PHP 8.1.
+Requires Concrete CMS 9.3.0 and PHP 8.1 or later.
 
 Most methods will return DTO objects or array of DTOs. Your Editor should help you with autocompletion.
 If not, add respective code:
@@ -155,3 +155,18 @@ $image = $imageUtility->getGalleryImage(
     </a>
 <?php endif; ?>
 ```
+
+## Image options
+
+`getImage()`, `getGalleryImage()`, `getSliderImage()`, their collection methods and `generateThumbnail()` accept these optional parameters:
+
+- `customName`: filename base without a path or extension. A hash and extension are added.
+- `format`: `jpeg`, `jpg`, `png`, `webp` or `auto`.
+- `quality`: JPEG or WebP quality from 0 to 100.
+- `pngCompressionLevel`: PNG compression from 0 to 9.
+
+All four default to `null`. Omitted format, quality and compression use the Concrete CMS settings.
+
+Raster images use generated, cached variants even when no resizing is needed.
+
+If you extend `ImageUtility`, update custom constructors to accept `ConcreteCmsUtility\Image\ThumbnailGenerator` and include the new optional parameters in overridden methods.

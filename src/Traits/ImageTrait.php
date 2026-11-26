@@ -32,13 +32,17 @@ trait ImageTrait
     }
 
     /**
-     * Get Image using BasicThumbnailer service ('helper/image') and get common info.
+     * Generate a cached image variant and get common info.
      *
      * @param int|FileEntity|FileVersionEntity|null $file "File ID, File Object or File Version Object"
      * @param int $width
      * @param int $height
      * @param bool $crop
      * @param string|null $alt "Provide string to replace default alt attribute (modified Concrete Title attribute)."
+     * @param string|null $customName Filename base without a path or extension.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality, or null to use the dashboard setting.
+     * @param int|null $pngCompressionLevel PNG compression, or null to use the dashboard setting.
      * @return ImageData
      */
     public function getImage(
@@ -47,6 +51,10 @@ trait ImageTrait
         int                                   $height,
         bool                                  $crop,
         ?string                               $alt = null,
+        ?string                               $customName = null,
+        ?string                               $format = null,
+        ?int                                  $quality = null,
+        ?int                                  $pngCompressionLevel = null,
     ): ImageData
     {
         /* @var FileEntity|FileVersionEntity $file */
@@ -68,6 +76,10 @@ trait ImageTrait
                 width: $width,
                 height: $height,
                 crop: $crop,
+                customName: $customName,
+                format: $format,
+                quality: $quality,
+                pngCompressionLevel: $pngCompressionLevel,
             );
 
             $url = $thumbnail->url;
@@ -119,38 +131,38 @@ trait ImageTrait
     }
 
     /**
-     * Wrapper for generating thumbnail.
-     * If image dimensions are smaller than provided dimensions, original url/dimensions will be used.
+     * Generate or reuse a cached thumbnail, including for equally sized or smaller source images.
      *
      * @param FileEntity|FileVersionEntity $file "File Object or File Version Object"
      * @param int $width
      * @param int $height
      * @param bool $crop
+     * @param string|null $customName Filename base without a path or extension.
+     * @param string|null $format Output format, or null to use the dashboard setting.
+     * @param int|null $quality JPEG or WebP quality, or null to use the dashboard setting.
+     * @param int|null $pngCompressionLevel PNG compression, or null to use the dashboard setting.
      * @return ThumbnailData
      */
     public function generateThumbnail(
         FileEntity|FileVersionEntity $file,
         int                          $width,
         int                          $height,
-        bool                         $crop
+        bool                         $crop,
+        ?string                      $customName = null,
+        ?string                      $format = null,
+        ?int                         $quality = null,
+        ?int                         $pngCompressionLevel = null,
     ): ThumbnailData
     {
-        /* @var FileEntity|FileVersionEntity $file */
-
-        $thumbnailUrl = $file->getURL();
-        $thumbnailWidth = $file->getAttribute('width');
-        $thumbnailHeight = $file->getAttribute('height');
-        if ($thumbnailWidth > $width or $thumbnailHeight > $height) {
-            $thumbnail = $this->ih->getThumbnail($file, $width, $height, $crop);
-            $thumbnailUrl = $thumbnail->src;
-            $thumbnailWidth = $thumbnail->width;
-            $thumbnailHeight = $thumbnail->height;
-        }
-
-        return new ThumbnailData(
-            url: (string)$thumbnailUrl,
-            width: (int)$thumbnailWidth,
-            height: (int)$thumbnailHeight,
+        return $this->thumbnailGenerator->generate(
+            file: $file,
+            width: $width,
+            height: $height,
+            crop: $crop,
+            customName: $customName,
+            format: $format,
+            quality: $quality,
+            pngCompressionLevel: $pngCompressionLevel,
         );
     }
 }

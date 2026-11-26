@@ -3,7 +3,7 @@
     "description": "Few handy, opinionated helpers for dealing with Files/Images when generating Images/Galleries/Sliders/File Lists etc.",
     "require": {
         "php": ">=8.1",
-        "concrete5/core": "^9.1.0",
+        "concrete5/core": "^9.3.0",
         "james-heinrich/getid3": "^1.9",
         "ext-simplexml": "*"
     },
