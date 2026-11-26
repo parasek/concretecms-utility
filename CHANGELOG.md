@@ -1,3 +1,10 @@
+# 5.0.0
+- Require Concrete CMS 9.3.0.
+- Add thumbnail name, format and compression options.
+- Generate cached raster variants without upscaling, with synchronous and asynchronous support.
+- Fix slider `srcset` widths and preserve custom `sizes`.
+- `ImageUtility` now requires `ThumbnailGenerator`. Update custom constructors and method overrides.
+
 # 4.1.0
 - Added file object to file data
 
